@@ -1,0 +1,7 @@
+*.py[cod]
+*.egg-info
+.build
+.tox
+.project
+.settings
+.idea
