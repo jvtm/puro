@@ -1,0 +1,11 @@
+[MASTER]
+
+[MESSAGES CONTROL]
+disable =
+    fixme,
+    missing-docstring,
+
+[FORMAT]
+max-line-length = 120
+expected-line-ending-format = LF
+

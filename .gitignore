@@ -1,6 +1,9 @@
 *.py[cod]
 *.egg-info
+build
+dist
 .build
+.pytest_cache
 .tox
 .project
 .settings

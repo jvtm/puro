@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
     name='puro',
@@ -18,7 +18,7 @@ setup(
     ],
     keywords='data streams json',
     packages=find_packages(exclude=['docs', 'tests']),
-    install_requires=['aiohttp', 'jsonschema'],
+    install_requires=['async-timeout', 'jsonschema'],
     extras_require={
         'test': ['coverage'],
     },
