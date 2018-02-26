@@ -1,5 +1,10 @@
 # Puro
 
+[![Build Status](https://travis-ci.org/jvtm/puro.svg?branch=master)](https://travis-ci.org/jvtm/puro)
+[![License](https://img.shields.io/pypi/l/puro.svg)](https://github.com/jvtm/puro)
+[![Version](https://img.shields.io/pypi/v/puro.svg)](https://pypi.python.org/pypi/puro)
+[![Python Versions](https://img.shields.io/pypi/pyversions/puro.svg)](https://pypi.python.org/pypi/puro)
+
 Highly configurable data streams in Python 3.x.
 
 Idea is to use _JSON schemas_ for selecting objects from _input sources_
