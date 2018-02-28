@@ -18,8 +18,10 @@ setup(
     ],
     keywords='data streams json',
     packages=find_packages(exclude=['docs', 'tests']),
-    install_requires=['async-timeout', 'jsonschema'],
+    # NOTE: for now all used helper modules as strict requirements
+    # this might change later on, and introducing 'full' + 'test' flavors
+    install_requires=['jsonschema', 'kmatch'],
     extras_require={
-        'test': ['coverage'],
+        'test': ['coverage', 'pytest'],
     },
 )
