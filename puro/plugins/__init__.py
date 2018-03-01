@@ -18,17 +18,14 @@ class Registry:
     def load_class(self, mod_path: str, *, name=None, base_class=None):
         """ Load a class into the registry
 
+        If name is not given, `plugin_name` class variable is checked from
+        the loaded class. If that is missing, full module path is used.
+
         :param mod_path: full module path including the class name
-        :param name: short-hand name to use (default: full path)
+        :param name: override plugin name
         :param base_class: optional sub-class check
-        :return: loaded class object (but this is usually ignored)
+        :return: loaded plugin name (to be used with other methods)
         """
-        if name is None:
-            name = mod_path
-
-        if name in self._plugins:
-            self.log.warning("Overriding plugin %r %r", name, self._plugins[name])
-
         mod_name, _, class_name = mod_path.rpartition(".")
         module = importlib.import_module(mod_name)
         plugin_class = getattr(module, class_name)
@@ -37,10 +34,19 @@ class Registry:
         if base_class is not None and not issubclass(plugin_class, base_class):
             raise TypeError(f"{mod_path!r} {plugin_class} is not sub-class of {base_class}")
 
+        if name is None:
+            name = getattr(plugin_class, "plugin_name", mod_path)
+
+        if name in self._plugins:
+            self.log.warning("Overriding plugin %r %r", name, self._plugins[name])
+
         self._plugins[name] = plugin_class
         self.log.info("Loaded plugin %r %r", name, plugin_class)
 
-        return self._plugins[name]
+        return name
+
+    def __getitem__(self, item):
+        return self.get_class(item)
 
     def get_class(self, name):
         """Return already loaded class"""

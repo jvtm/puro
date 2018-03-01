@@ -29,6 +29,8 @@ from . import Selector
 
 
 class JSONSchemaSelector(Selector):
+    plugin_name = "jsonschema"
+
     def __init__(self, name, *, schema=None, schema_path=None):
         super().__init__(name)
 

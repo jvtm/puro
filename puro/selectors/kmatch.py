@@ -18,6 +18,8 @@ from . import Selector
 
 
 class KmatchSelector(Selector):
+    plugin_name = "kmatch"
+
     def __init__(self, name, *, kmatch=None, kmatch_path=None, suppress_key_errors=True):
         super().__init__(name)
 
