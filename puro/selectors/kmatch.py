@@ -29,9 +29,9 @@ class KmatchSelector(Selector):
 
         self.kmatch = K(kmatch, suppress_key_errors=suppress_key_errors)
 
-    def check(self, item):
+    def check(self, value):
         try:
-            return self.kmatch.match(item)
+            return self.kmatch.match(value)
         except (KeyError, TypeError, ValueError):
             # trying to match against non-dictionary, missing keys, unexpected value types, ...
             return False

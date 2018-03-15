@@ -4,6 +4,7 @@ Plugin registry, base classes and related helpers
 import importlib
 import inspect
 import logging
+from typing import Optional, Type
 
 
 class Registry:
@@ -15,7 +16,7 @@ class Registry:
         self.log = logging.getLogger(self.__class__.__name__)
         self._plugins = {}
 
-    def load_class(self, mod_path: str, *, name=None, base_class=None):
+    def load_class(self, mod_path: str, *, name: Optional[str] = None, base_class: Optional[Type] = None) -> str:
         """ Load a class into the registry
 
         If name is not given, `plugin_name` class variable is checked from
@@ -38,27 +39,38 @@ class Registry:
             name = getattr(plugin_class, "plugin_name", mod_path)
 
         if name in self._plugins:
-            self.log.warning("Overriding plugin %r %r", name, self._plugins[name])
+            self.log.warning("Overriding plugin class %r %r", name, self._plugins[name])
 
         self._plugins[name] = plugin_class
-        self.log.info("Loaded plugin %r %r", name, plugin_class)
+        self.log.info("Loaded plugin class %r %r", name, plugin_class)
 
         return name
+
+    # def add_class(self, name: str, plugin_class: Type, base_class: Optional[Type]):
+    #    """Add class by name"""
+    #    ...for adding already existing class more directly, eg. known internal classes, tests, ...
+    #   if adding this, then maybe also __setitem__() should be added
+    #   move the checks here. almost same signature as above, just plugin_class instead of name
 
     def __getitem__(self, item):
         return self.get_class(item)
 
-    def get_class(self, name):
+    def get_class(self, plugin_name: str):
         """Return already loaded class"""
-        return self._plugins[name]
+        return self._plugins[plugin_name]
 
-    def get_instance(self, name, *args, **kwargs):
+    def get_instance(self, plugin_name: str, *args, **kwargs):
         """Create instance of already loaded class"""
-        return self._plugins[name](*args, **kwargs)
+        return self._plugins[plugin_name](*args, **kwargs)
 
 
 class BasePlugin:   # pylint: disable=too-few-public-methods
-    # XXX: this might get ported from old code next
-    def __init__(self, name):
+    def __init__(self, name: str):
+        # perhaps logger should be the name, with a prefix...
         self.log = logging.getLogger(self.__class__.__name__)
         self.name = name
+
+
+class Action(BasePlugin):
+    async def __call__(self, item):
+        raise NotImplementedError()

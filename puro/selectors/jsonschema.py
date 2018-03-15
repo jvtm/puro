@@ -43,5 +43,5 @@ class JSONSchemaSelector(Selector):
         Draft4Validator.check_schema(schema)
         self.validator = Draft4Validator(schema)
 
-    def check(self, item):
-        return self.validator.is_valid(item)
+    def check(self, value):
+        return self.validator.is_valid(value)
