@@ -2,6 +2,7 @@ import json
 
 import pytest
 
+from puro.api import Task
 from puro.plugins import Registry
 
 
@@ -25,6 +26,16 @@ def test_plugin_name(reg: Registry):
     assert name == "jsonschema"
     instance = reg.get_instance(name, "instancename", schema={"type": "string"})
     assert instance.check("hello") is True
+
+
+@pytest.mark.asyncio
+async def test_jmespath_action(reg: Registry):
+    pytest.importorskip("jmespath")
+    reg.load_class("puro.plugins.jmespath.JMESPath")
+    action = reg.get_instance("jmespath", "only_version", expression="{version: version}")
+    task = Task({"version": 1, "value": "something-complex-here"})
+    await action(task)
+    assert task.value == {"version": 1}
 
 
 def test_getitem(reg: Registry):

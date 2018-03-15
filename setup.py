@@ -20,8 +20,8 @@ setup(
     packages=find_packages(exclude=['docs', 'tests']),
     # NOTE: for now all used helper modules as strict requirements
     # this might change later on, and introducing 'full' + 'test' flavors
-    install_requires=['jsonschema', 'kmatch'],
+    install_requires=['jmespath', 'jsonschema', 'kmatch'],
     extras_require={
-        'test': ['coverage', 'pytest'],
+        'test': ['coverage', 'pytest', 'pytest-asyncio'],
     },
 )
