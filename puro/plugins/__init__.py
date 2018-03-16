@@ -4,12 +4,13 @@ Plugin registry, base classes and related helpers
 import importlib
 import inspect
 import logging
+from collections.abc import MutableMapping
 from typing import Optional, Type
 
 from ..errors import StopProcessing
 
 
-class Registry:
+class Registry(MutableMapping):
     """Container for loading plugin classes based on configuration values.
     Plugin classes can be referred by `name`, which makes the overall
     configuration a bit more friendly.
@@ -23,6 +24,8 @@ class Registry:
         If name is not given, `plugin_name` class variable is checked from
         the loaded class. If that is missing, full module path is used.
 
+        Might raise AttributeError, TypeError, ModuleNotFoundError, ...
+
         :param mod_path: full module path including the class name
         :param name: override plugin name
         :param base_class: optional sub-class check
@@ -31,27 +34,38 @@ class Registry:
         mod_name, _, class_name = mod_path.rpartition(".")
         module = importlib.import_module(mod_name)
         plugin_class = getattr(module, class_name)
-        if not inspect.isclass(plugin_class):
-            raise TypeError(f"{mod_path!r} is not pointing to a class")
-        if base_class is not None and not issubclass(plugin_class, base_class):
-            raise TypeError(f"{mod_path!r} {plugin_class} is not sub-class of {base_class}")
-
         if name is None:
             name = getattr(plugin_class, "plugin_name", mod_path)
+        self.add_class(name, plugin_class, base_class=base_class)
 
-        self._plugins[name] = plugin_class
         return name
 
-    # def add_class(self, name: str, plugin_class: Type, base_class: Optional[Type]):
-    #    """Add class by name"""
-    #    ...for adding already existing class more directly, eg. known internal classes, tests, ...
-    #   if adding this, then maybe also __setitem__() should be added
-    #   move the checks here. almost same signature as above, just plugin_class instead of name
+    def add_class(self, name: str, plugin_class: Type, *, base_class: Optional[Type] = None):
+        """Add class manually to Registry
+        This is useful for cases when classes are being added during runtime, eg. from factory methods.
+        """
+        if not inspect.isclass(plugin_class):
+            raise TypeError(f"{plugin_class} is not a class")
+        if base_class is not None and not issubclass(plugin_class, base_class):
+            raise TypeError(f"{name!r} {plugin_class} is not sub-class of {base_class}")
+        self._plugins[name] = plugin_class
 
-    def __getitem__(self, item):
-        return self.get_class(item)
+    def __setitem__(self, key, value):
+        self.add_class(key, value)
 
-    def get_class(self, plugin_name: str):
+    def __getitem__(self, key):
+        return self.get_class(key)
+
+    def __delitem__(self, key):
+        del self._plugins[key]
+
+    def __iter__(self):
+        return iter(self._plugins)
+
+    def __len__(self):
+        return len(self._plugins)
+
+    def get_class(self, plugin_name: str) -> Type:
         """Return already loaded class"""
         return self._plugins[plugin_name]
 

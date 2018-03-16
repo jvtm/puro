@@ -80,6 +80,12 @@ def test_subclass_check(registry: Registry):
         registry.load_class("collections.OrderedDict", base_class=RawConfigParser)
 
 
+def test_add_class(registry: Registry):
+    registry.add_class("notfound", FileNotFoundError, base_class=OSError)
+    with pytest.raises(FileNotFoundError):
+        raise registry.get_instance("notfound", "Missing")
+
+
 def test_errors(registry: Registry):
     invalid = [
         "collections.TurboDict",
