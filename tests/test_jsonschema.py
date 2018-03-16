@@ -1,6 +1,6 @@
 import json
 
-from puro.selectors.jsonschema import JSONSchemaSelector
+from puro.plugins.jsonschema import JSONSchemaSelector
 
 SCHEMA_SIMPLE_WITH_VERSION = {
     "type": "object",

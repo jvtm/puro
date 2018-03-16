@@ -22,7 +22,7 @@ def test_simple_load(reg: Registry):
 
 def test_plugin_name(reg: Registry):
     pytest.importorskip("jsonschema")
-    name = reg.load_class("puro.selectors.jsonschema.JSONSchemaSelector")
+    name = reg.load_class("puro.plugins.jsonschema.JSONSchemaSelector")
     assert name == "jsonschema"
     instance = reg.get_instance(name, "instancename", schema={"type": "string"})
     assert instance.check("hello") is True

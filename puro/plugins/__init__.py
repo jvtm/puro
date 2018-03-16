@@ -6,6 +6,8 @@ import inspect
 import logging
 from typing import Optional, Type
 
+from ..errors import StopProcessing
+
 
 class Registry:
     """Container for loading plugin classes based on configuration values.
@@ -74,3 +76,23 @@ class BasePlugin:   # pylint: disable=too-few-public-methods
 class Action(BasePlugin):
     async def __call__(self, item):
         raise NotImplementedError()
+
+
+class Selector(Action):
+    def check(self, value):
+        """Check if single item matches the configured schema, restrictions.
+
+        Usually `value` is dictionary, but other basic types possible too
+        Note: task/feed/service context are intentionally not available here.
+
+        For now any logic that needs to remember anything, access external data
+        stores, etc should be implemented as Action instead
+
+        For now, this SHOULD NOT raise any ValueErrors, KeyErrors etc.
+        So, depending on the used helpers, catch whatever it might throw at you.
+        """
+        raise NotImplementedError()
+
+    async def __call__(self, item):
+        if not self.check(item.value):
+            raise StopProcessing()

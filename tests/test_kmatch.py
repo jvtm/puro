@@ -1,7 +1,7 @@
 import json
 import time
 
-from puro.selectors.kmatch import KmatchSelector
+from puro.plugins.kmatch import KmatchSelector
 
 
 def test_simple():

@@ -41,8 +41,8 @@ class Task:
 
 class Flow:
     DEFAULT_PLUGINS = (
-        "puro.selectors.jsonschema.JSONSchemaSelector",
-        "puro.selectors.kmatch.KmatchSelector",
+        "puro.plugins.jsonschema.JSONSchemaSelector",
+        "puro.plugins.kmatch.KmatchSelector",
         "puro.plugins.jmespath.JMESPath",
     )
 
