@@ -73,7 +73,8 @@ class Flow:
             name = plugin.get("name")
             mod_path = plugin.get("class")
             try:
-                self.registry.load_class(mod_path, name=name, base_class=BasePlugin)
+                name = self.registry.load_class(mod_path, name=name, base_class=BasePlugin)
+                self.log.info("Loaded plugin class %r as %r", mod_path, name)
             except catch as ex:
                 self.log.info("Failed to load plugin class %r %s", plugin, ex)
 
@@ -84,7 +85,7 @@ class Flow:
             kwargs = deepcopy(item)
             plugin_name = kwargs.pop("plugin")
             loaded[name] = self.registry.get_instance(plugin_name, **kwargs)
-            self.log.info("Loaded instance %s %s %r", name, plugin_name, loaded[name])
+            self.log.info("Loaded instance of %r as %r", plugin_name, name)
         return loaded
 
     async def initialize(self):

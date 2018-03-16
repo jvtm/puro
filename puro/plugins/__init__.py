@@ -15,7 +15,6 @@ class Registry:
     configuration a bit more friendly.
     """
     def __init__(self):
-        self.log = logging.getLogger(self.__class__.__name__)
         self._plugins = {}
 
     def load_class(self, mod_path: str, *, name: Optional[str] = None, base_class: Optional[Type] = None) -> str:
@@ -40,12 +39,7 @@ class Registry:
         if name is None:
             name = getattr(plugin_class, "plugin_name", mod_path)
 
-        if name in self._plugins:
-            self.log.warning("Overriding plugin class %r %r", name, self._plugins[name])
-
         self._plugins[name] = plugin_class
-        self.log.info("Loaded plugin class %r %r", name, plugin_class)
-
         return name
 
     # def add_class(self, name: str, plugin_class: Type, base_class: Optional[Type]):
