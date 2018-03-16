@@ -96,3 +96,16 @@ class Selector(Action):
     async def __call__(self, item):
         if not self.check(item.value):
             raise StopProcessing()
+
+
+class ServicePlugin(BasePlugin):
+    """Base class for service plugins
+    Instantiated once, and reachable via service context
+    Useful for DB connections, global state objects, statistics etc
+    """
+    async def initialize(self):
+        """Initialize service plugin"""
+        # This is the place to do connection, pool, etc creation,
+        # especially if those are coroutines themselves
+        # TODO: might add loop=None keyword argument, if we ever want to use custom loop
+        pass

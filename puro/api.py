@@ -18,7 +18,7 @@ import logging
 import uuid
 from copy import deepcopy
 
-from .plugins import BasePlugin, Registry
+from .plugins import BasePlugin, Registry, ServicePlugin
 
 
 class Task:
@@ -86,6 +86,13 @@ class Flow:
             loaded[name] = self.registry.get_instance(plugin_name, **kwargs)
             self.log.info("Loaded instance %s %s %r", name, plugin_name, loaded[name])
         return loaded
+
+    async def initialize(self):
+        """Initialize asyncio related service parts, including service plugins"""
+        for name, plugin in self.service_plugins.items():
+            if isinstance(plugin, ServicePlugin):
+                self.log.info("Initializing %r", name)
+                await plugin.initialize()
 
     def create_task(self, obj) -> Task:
         # TODO: item context, stats, ...
